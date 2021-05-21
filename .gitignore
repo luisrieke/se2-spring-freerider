@@ -41,3 +41,5 @@ mvn
 .mvn
 .gitattributes
 mvnw.cmd
+mvnw
+.mvn/wrapper
