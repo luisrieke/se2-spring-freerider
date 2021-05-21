@@ -38,3 +38,6 @@ spring_log.txt
 ### more gitignore data ###
 
 mvn
+.mvn
+.gitattributes
+mvnw.cmd
