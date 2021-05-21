@@ -34,3 +34,7 @@ build/
 find_src.txt
 ls_la.txt
 spring_log.txt
+
+### more gitignore data ###
+
+mvn
