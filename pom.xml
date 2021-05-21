@@ -8,8 +8,8 @@
 		<version>2.4.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>se2-spring-freerider</artifactId>
+	<groupId>de.freerider</groupId>
+	<artifactId>customer-manager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>se2-spring-freerider</name>
 	<description>Freerider Carsharing App</description>

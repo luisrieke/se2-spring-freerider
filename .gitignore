@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+find_src.txt
+ls_la.txt
+spring_log.txt

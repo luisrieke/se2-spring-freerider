@@ -1,4 +1,4 @@
-package com.example.se2springfreerider;
+package de.freerider.customermanager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

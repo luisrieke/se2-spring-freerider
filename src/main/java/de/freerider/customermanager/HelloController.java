@@ -1,4 +1,4 @@
-package com.example.se2springfreerider;
+package de.freerider.customermanager;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
