@@ -4,11 +4,11 @@ public class Customer {
 
     // --- Attribute ---
 
-    String id;
-    String lastName;
-    String firstName;
-    String contact;
-    Status status;
+    private String id;
+    private String lastName;
+    private String firstName;
+    private String contact;
+    private Status status;
 
     // --- Konstruktor ---
 
