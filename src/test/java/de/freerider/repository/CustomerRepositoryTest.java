@@ -15,7 +15,7 @@ class CustomerRepositoryTest {
     CustomerRepository customerRepository = new CustomerRepository();
 
     @Test
-    void testCustomerRepo() {
+    void test5Customers() {
 
         // 5 neue Customer anlegen:
         Customer anna = new Customer("Schwarz", "Anna", "anna.schwarz@gmail.com");
