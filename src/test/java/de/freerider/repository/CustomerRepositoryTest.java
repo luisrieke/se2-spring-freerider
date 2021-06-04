@@ -17,7 +17,7 @@ class CustomerRepositoryTest {
     @Test
     void testCustomerRepo() {
 
-        // neue Customer anlegen:
+        // 5 neue Customer anlegen:
         Customer anna = new Customer("Schwarz", "Anna", "anna.schwarz@gmail.com");
         Customer peter = new Customer("Weiß", "Peter", "peter.weiss@hotmail.com");
         Customer hans = new Customer("Blau", "Hans", "hans.blau@mail.com");
@@ -35,27 +35,30 @@ class CustomerRepositoryTest {
         assertEquals(5, customerRepository.count());
 
         // saveAll prüfen:
-        LinkedList<Customer> customerLinkedList = new LinkedList<Customer>();
-        customerLinkedList.add(anna);
-        customerRepository.saveAll(customerLinkedList);
+        LinkedList<Customer> customerList = new LinkedList<Customer>();
+        customerList.add(anna);
+        customerRepository.save(peter);
+        customerRepository.saveAll(customerList);
         assertEquals(5, customerRepository.count());
 
-        // versuchen Anna zu finden:
-        Optional<Customer> foundAnna = customerRepository.findById(anna.getId());
-        assertEquals("Anna", foundAnna.get().getFirstName());
+        // findById prüfen, versuchen Anna zu finden:
+        Optional<Customer> annaByID = customerRepository.findById(anna.getId());
+        assertEquals("Anna", annaByID.get().getFirstName());
 
+        // existsById prüfen:
         assertTrue(customerRepository.existsById(anna.getId()));
 
+        // findAll prüfen:
         System.out.println("Prüfen wer angelegt wurde:");
         customerRepository.findAll().forEach(customer -> System.out.println(customer.getFirstName()));
 
-
-        String[] findAllByIdName = new String[]{anna.getId()};
-        Iterable<Customer> findAllByIdIter = customerRepository.findAllById(Arrays.asList(findAllByIdName));
+        // findAllById prüfen:
+        String[] listByID = new String[]{anna.getId()};
+        Iterable<Customer> customerIterable = customerRepository.findAllById(Arrays.asList(listByID));
         System.out.println("\nPrüfen ob Anna gefunden wird:");
-        findAllByIdIter.forEach(customer -> System.out.println(customer.getFirstName()));
+        customerIterable.forEach(customer -> System.out.println(customer.getFirstName()));
 
-        // prüfen ob alles klappt wenn wir wieder alle speichern:
+        // prüfen ob alles klappt wenn wir alle ein zweites mal speichern:
         customerRepository.save(anna);
         customerRepository.save(peter);
         customerRepository.save(hans);
@@ -90,13 +93,16 @@ class CustomerRepositoryTest {
     @Test
     void deleteAllById() {
 
+        // anlegen:
         Customer anna = new Customer("Schwarz", "Anna", "anna.schwarz@gmail.com");
         Customer peter = new Customer("Weiß", "Peter", "peter.weiss@hotmail.com");
 
+        // speichern:
         customerRepository.save(anna);
         customerRepository.save(peter);
         assertEquals(2, customerRepository.count());
 
+        // löschen:
         String[] names = new String[]{anna.getId(), peter.getId()};
         customerRepository.deleteAllById(Arrays.asList(names));
         assertEquals(0, customerRepository.count());
@@ -106,13 +112,16 @@ class CustomerRepositoryTest {
     @Test
     void deleteAll() {
 
+        // anlegen:
         Customer anna = new Customer("Schwarz", "Anna", "anna.schwarz@gmail.com");
         Customer peter = new Customer("Weiß", "Peter", "peter.weiss@hotmail.com");
 
+        // speichern:
         customerRepository.save(anna);
         customerRepository.save(peter);
         assertEquals(2, customerRepository.count());
 
+        // löschen:
         customerRepository.deleteAll();
         assertEquals(0, customerRepository.count());
 
