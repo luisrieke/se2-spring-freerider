@@ -1,20 +1,13 @@
 package de.freerider.repository;
 
+import de.freerider.model.Customer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import de.freerider.model.Customer;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,239 +15,359 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class CustomerRepositoryTest {
 
-	@Autowired
-	private CrudRepository<Customer,String> customerRepository;
+	// --- Attribute ---
 
-	// two sample customers
+	@Autowired
+	private CrudRepository<Customer, String> customerRepository;
+
 	private Customer mats;
 	private Customer thomas;
 
+	// --- Test Aufbau ---
 
-	/**
-	 * Set up test, runs before EVERY test execution
-	 */
 	@BeforeEach
-	public void beforeEach() {
-		//
-		mats = new Customer( "Mats", "Hummels", "mh@weltmeister-2014.dfb.de" );
-		thomas = new Customer( "Thomas", "Mueller", "th@weltmeister-2014.dfb.de" );
-
-		customerRepository.deleteAll();		// clear repository
-		assertEquals( customerRepository.count(), 0 );
+	public void CustomersSetup() {
+		mats = new Customer("Matsen", "Mats", "mmatsen@email.de");
+		thomas = new Customer("Thomasen", "Thomas", "tthomasen@email.de");
 	}
 
+	@AfterEach
+	public void ClearRepository() {
+		customerRepository.deleteAll();
+	}
+
+	// --- Tests ---
+
+	// Konstruktor - Tests
+
 	@Test
-	void testSaveCustomers() {
+	void testLeeresRepo() {
+		long customerCount = customerRepository.count();
+		assertEquals(customerCount, 0);
+		assertNotNull(customerRepository);
+	}
+
+	// save() – Tests
+
+	@Test
+	void testCustomerSpeichern() {
 		customerRepository.save(mats);
 		customerRepository.save(thomas);
 		assertEquals(2, customerRepository.count());
 	}
 
 	@Test
-	void testNullIdAssignment() {
+	void testIdZuweisung() {
 		customerRepository.save(mats);
-
 		Iterator<Customer> iter = customerRepository.findAll().iterator();
 		String newId = iter.next().getId();
-
 		assertTrue(newId.length() > 0);
 	}
 
 	@Test
-	void testKeepId() {
-		mats.setId("matsID");
+	void testIdZuweisenUndPruefen() {
+		mats.setId("012345");
 		customerRepository.save(mats);
-		Optional<Customer> savedCustomer = customerRepository.findById("matsID");
-
-		assertTrue(savedCustomer.isPresent());
+		Optional<Customer> gespeichert = customerRepository.findById("012345");
+		assertTrue(gespeichert.isPresent());
 	}
 
 	@Test
-	void testSaveNull() {
+	void testCustomerMitNullId() {
+		mats.setId(null);
+		customerRepository.save(mats);
+		String matsID = mats.getId();
+		Optional<Customer> gespeichert = customerRepository.findById(matsID);
+		assertTrue(gespeichert.isPresent());
+	}
+
+	@Test
+	void testCustomerMitNichtNullId() {
+		mats.setId("012345");
+		customerRepository.save(mats);
+		Optional<Customer> gespeichert = customerRepository.findById("012345");
+		assertTrue(gespeichert.isPresent());
+		assertEquals("012345", mats.getId());
+	}
+
+	@Test
+	void testNullSpeichern() {
 		customerRepository.save(null);
 		assertEquals(0, customerRepository.count());
 	}
 
 	@Test
-	void testSaveTwice() {
+	void testZweimalSpeichern() {
 		customerRepository.save(mats);
 		customerRepository.save(mats);
 		assertEquals(1, customerRepository.count());
 	}
 
 	@Test
-	void testSaveWithSameId() {
-		mats.setId("ID123");
-		thomas.setId("ID123");
+	void testMitSelberIdSpeichern() {
+		mats.setId("67789");
+		thomas.setId("67789");
 		customerRepository.save(mats);
 		customerRepository.save(thomas);
 		assertEquals(1, customerRepository.count());
 	}
 
-	// SAVE ALL TESTS
+	// saveAll() – Tests
 
 	@Test
-	void testSaveMultiple() {
-		LinkedList listOfCustomers = new LinkedList();
-		listOfCustomers.add(mats);
-		listOfCustomers.add(thomas);
-
-		customerRepository.saveAll(listOfCustomers);
-
-		assertEquals(2, customerRepository.count());
-	}
-
-	@Test
-	void testSaveOne() {
-		LinkedList listOfCustomers = new LinkedList();
-		listOfCustomers.add(thomas);
-
-		customerRepository.saveAll(listOfCustomers);
-
+	void testEinmalSpeichern() {
+		LinkedList listeDerCustomer = new LinkedList();
+		listeDerCustomer.add(thomas);
+		customerRepository.saveAll(listeDerCustomer);
 		assertEquals(1, customerRepository.count());
 	}
 
 	@Test
-	void testSaveNone() {
-		LinkedList listOfCustomers = new LinkedList();
+	void testMehrmalsSpeichern() {
+		LinkedList listeDerCustomer = new LinkedList();
+		listeDerCustomer.add(mats);
+		listeDerCustomer.add(thomas);
+		customerRepository.saveAll(listeDerCustomer);
+		assertEquals(2, customerRepository.count());
+	}
 
-		customerRepository.saveAll(listOfCustomers);
-
+	@Test
+	void testLeereListe() {
+		LinkedList listeDerCustomer = new LinkedList();
+		customerRepository.saveAll(listeDerCustomer);
 		assertEquals(0, customerRepository.count());
 	}
 
 
 	@Test
-	void testSaveAllNull() {
+	void testSaveAllMitNullListe() {
 		customerRepository.saveAll(null);
-
 		assertEquals(0, customerRepository.count());
 	}
 
-	// FIND BY ID TESTS
+	// findById() – Tests
 
 	@Test
-	void testFindOne() {
-		Customer saved = customerRepository.save(mats);
-		assertTrue(customerRepository.findById(saved.getId()).isPresent());
+	void testCustomerFindenById() {
+		Customer gespeichert = customerRepository.save(mats);
+		assertTrue(customerRepository.findById(gespeichert.getId()).isPresent());
 	}
 
 	@Test
-	void testMissOne() {
-		assertFalse(customerRepository.findById("NotInRepository").isPresent());
-	}
-
-	@Test
-	void testFindNull() {
+	void testSucheNachNull() {
 		assertFalse(customerRepository.findById(null).isPresent());
 	}
 
-	// FIND ALL TEST
-
 	@Test
-	void testFindAll() {
-		Customer savedMats = customerRepository.save(mats);
-		Customer savedThomas = customerRepository.save(thomas);
-
-		LinkedList list = new LinkedList();
-		list.add(savedMats);
-		list.add(savedThomas);
-
-//		assertEquals(2, Iterator.l customerRepository.findAllById(list));
-
+	void testFehlenderEintrag() {
+		assertFalse(customerRepository.findById("Fehler").isPresent());
 	}
 
-//	@Test
-//	void testFive() {
-//
-//		Customer max = new Customer("Mustermann", "Max", "max@example.com");
-//		Customer margret = new Customer("Mustermann", "Margret", "margret@example.com");
-//		Customer michael = new Customer("Mustermann", "Michael", "michael@example.com");
-//		Customer monika = new Customer("Mustermann", "Monika", "monika@example.com");
-//		Customer michel = new Customer("Mustermann", "Michel", "michel@example.com");
-//
-//		repo.save(max);
-//		repo.save(margret);
-//		repo.save(michael);
-//		repo.save(monika);
-//		repo.save(michel);
-//
-//		assertEquals(5, repo.count());
-//
-//		// try saving using save all
-//		LinkedList<Customer> customerLinkedList= new LinkedList<Customer>();
-//		customerLinkedList.add(max);
-//		repo.saveAll(customerLinkedList);
-//		assertEquals(5, repo.count());
-//
-//
-//		// try finding max
-//		Optional<Customer> foundMax = repo.findById(max.getId());
-//		assertEquals("Max", foundMax.get().getFirstName());
-//
-//		assertTrue(repo.existsById(max.getId()));
-//
-//		System.out.println("Sind alle Namen vorhanden?:");
-//		repo.findAll().forEach(customer -> System.out.println(customer.getFirstName()));
-//
-//
-//		String[] findAllByIdName = new String[]{max.getId()};
-//		Iterable<Customer> findAllByIdIter = repo.findAllById(Arrays.asList(findAllByIdName));
-//		System.out.println("Ist hier Max?:");
-//		findAllByIdIter.forEach(customer -> System.out.println(customer.getFirstName()));
-//
-//		// try saving same people again
-//		repo.save(max);
-//		repo.save(margret);
-//		repo.save(michael);
-//		repo.save(monika);
-//		repo.save(michel);
-//
-//		assertEquals(5, repo.count());
-//
-//	}
-//
-//
-//	@Test
-//	void deleteById() {
-//		Customer max = new Customer("Mustermann", "Max", "max@example.com");
-//		repo.save(max);
-//		assertEquals(1, repo.count());
-//		repo.deleteById(max.getId());
-//		assertEquals(0, repo.count());
-//	}
-//
-//	@Test
-//	void delete() {
-//		Customer max = new Customer("Mustermann", "Max", "max@example.com");
-//		repo.save(max);
-//		assertEquals(1, repo.count());
-//		repo.delete(max);
-//		assertEquals(0, repo.count());
-//	}
-//
-//	@Test
-//	void deleteAllById() {
-//		Customer max = new Customer("Mustermann", "Max", "max@example.com");
-//		Customer margret = new Customer("Mustermann", "Margret", "margret@example.com");
-//		repo.save(margret);
-//		repo.save(max);
-//		assertEquals(2, repo.count());
-//
-//		String[] names = new String[]{max.getId(), margret.getId()};
-//		repo.deleteAllById(Arrays.asList(names));
-//		assertEquals(0, repo.count());
-//	}
-//
-//	@Test
-//	void deleteAll() {
-//		Customer max = new Customer("Mustermann", "Max", "max@example.com");
-//		Customer margret = new Customer("Mustermann", "Margret", "margret@example.com");
-//		repo.save(margret);
-//		repo.save(max);
-//		assertEquals(2, repo.count());
-//
-//		repo.deleteAll();
-//		assertEquals(0, repo.count());
-//	}
+	// findAll() – Tests
+
+	@Test
+	void testLeeresRepoAlleFinden() {
+		Iterable<Customer> listeDerCustomer = customerRepository.findAll();
+		LinkedList<Customer> leereListe = new LinkedList<Customer>();
+		assertIterableEquals(listeDerCustomer, leereListe);
+	}
+
+	@Test
+	void testAlleFinden() {
+		LinkedList<Customer> listeDerCustomer = new LinkedList<Customer>();
+		listeDerCustomer.add(thomas);
+		listeDerCustomer.add(mats);
+		customerRepository.saveAll(listeDerCustomer);
+		Collection<Customer> listeDerGefundenenCustomer = (Collection<Customer>) customerRepository.findAll();
+		assertTrue(listeDerGefundenenCustomer.containsAll(listeDerCustomer));
+	}
+
+	// findAllById() – Tests
+
+	@Test
+	void testAlleMitIdFinden() {
+		mats.setId("ABCD");
+		thomas.setId("EFGH");
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		List<String> idListe = new ArrayList<String>();
+		idListe.add(mats.getId());
+		idListe.add(thomas.getId());
+		Iterable<Customer> gefunden = customerRepository.findAllById(idListe);
+		List<Customer> listeDerCustomer = new ArrayList<Customer>();
+		listeDerCustomer.add(mats);
+		listeDerCustomer.add(thomas);
+		assertEquals(gefunden, listeDerCustomer);
+	}
+
+	@Test
+	void testFindAllBySucheNachFalscherId() {
+		mats.setId("ABCD");
+		thomas.setId("EFGH");
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		ArrayList<String> idList = new ArrayList<String>();
+		idList.add("ABCD");
+		idList.add("EFGH");
+		idList.add("Fehler");
+		List<Customer> listeDerCustomer = new ArrayList<Customer>();
+		listeDerCustomer.add(mats);
+		listeDerCustomer.add(thomas);
+		Iterable<Customer> foundById = customerRepository.findAllById(idList);
+		assertEquals(foundById, listeDerCustomer);
+	}
+
+	// count() – Tests
+
+	@Test
+	void testCountVollesRepository() {
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		assertEquals(customerRepository.count(), 2);
+	}
+
+	@Test
+	void testCountLeeresRepository() {
+		CrudRepository<Customer, String> customerRepository = new CustomerRepository();
+		assertEquals(customerRepository.count(), 0);
+	}
+
+	// deleteById() – Tests
+
+	@Test
+	void testDeleteMitId() {
+		mats.setId("ABCD");
+		thomas.setId("EFGH");
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		long customerVorDelete = customerRepository.count();
+		customerRepository.deleteById("EFGH");
+		assertEquals(customerRepository.count(), customerVorDelete - 1);
+		assertFalse(customerRepository.existsById("EFGH"));
+	}
+
+	@Test
+	void testDeleteMitFalscherId() {
+		mats.setId("ABCD");
+		thomas.setId("EFGH");
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		long customerVorDelete = customerRepository.count();
+		customerRepository.deleteById("Fehler");
+		assertEquals(customerRepository.count(), customerVorDelete);
+	}
+
+	// delete () – Tests
+
+	@Test
+	void testDelete() {
+		mats.setId("ABCD");
+		thomas.setId("EFGH");
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		long customerVorDelete = customerRepository.count();
+		customerRepository.delete(mats);
+		assertEquals(customerRepository.count(), customerVorDelete - 1);
+		assertFalse(customerRepository.existsById("ABCD"));
+	}
+
+	@Test
+	void testDeleteFehlerhaft() {
+		mats.setId("ABCD");
+		thomas.setId("EFGH");
+		customerRepository.save(mats);
+		long customerVorDelete = customerRepository.count();
+		customerRepository.delete(thomas);
+		assertEquals(customerRepository.count(), customerVorDelete);
+		assertFalse(customerRepository.existsById("EFGH"));
+	}
+
+	@Test
+	void testDeleteMitNull() {
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> {
+					customerRepository.delete(null);
+				}
+		);
+	}
+
+	// deleteAllById () – Tests
+
+	@Test
+	void testDeleteAllById() {
+		mats.setId("ABCD");
+		thomas.setId("EFGH");
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		long customerVorDelete = customerRepository.count();
+		ArrayList<String> idListe = new ArrayList<String>();
+		idListe.add("ABCD");
+		long listenGroesse = idListe.size();
+		customerRepository.deleteAllById(idListe);
+		assertEquals(customerRepository.count(), customerVorDelete - listenGroesse);
+		assertFalse(customerRepository.existsById("ABCD"));
+		assertTrue(customerRepository.existsById("EFGH"));
+	}
+
+	@Test
+	void testDeleteAllByIdFehlerhaft() {
+		mats.setId("ABCD");
+		thomas.setId("EFGH");
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		long customerVorDelete = customerRepository.count();
+		LinkedList<String> idListe = new LinkedList<String>();
+		idListe.add("ABCD");
+		idListe.add("Fehler");
+		customerRepository.deleteAllById(idListe);
+		assertEquals(customerRepository.count(), customerVorDelete - 1);
+		assertFalse(customerRepository.existsById("ABCD"));
+		assertTrue(customerRepository.existsById("EFGH"));
+	}
+
+	// deleteAll ( Iterable<> entities ) – Tests
+
+	@Test
+	void testDeleteAllEntities() {
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		long customerVorDelete = customerRepository.count();
+		ArrayList<Customer> listeDerCustomer = new ArrayList<Customer>();
+		listeDerCustomer.add(mats);
+		long listenGroesse = listeDerCustomer.size();
+		customerRepository.deleteAll(listeDerCustomer);
+		assertEquals(customerRepository.count(), customerVorDelete - listenGroesse);
+	}
+
+	@Test
+	void testDeleteAllEntitiesFehlerhaft() {
+		customerRepository.save(mats);
+		long customerVorDelete = customerRepository.count();
+		ArrayList<Customer> listeDerCustomer = new ArrayList<Customer>();
+		listeDerCustomer.add(thomas);
+		customerRepository.deleteAll(listeDerCustomer);
+		assertEquals(customerRepository.count(), customerVorDelete);
+	}
+
+	// deleteAll () – Tests
+
+	@Test
+	void testDeleteAll() {
+		customerRepository.save(mats);
+		customerRepository.save(thomas);
+		assertEquals(customerRepository.count(), 2);
+		customerRepository.deleteAll();
+		assertEquals(customerRepository.count(), 0);
+	}
+
+	@Test
+	void testDeleteAllWennBereitsLeer() {
+		long customerVorDelete = customerRepository.count();
+		customerRepository.deleteAll();
+		long customerNachDelete = customerRepository.count();
+		assertEquals(customerVorDelete, customerNachDelete);
+		assertEquals(customerNachDelete, 0);
+	}
+
 }
