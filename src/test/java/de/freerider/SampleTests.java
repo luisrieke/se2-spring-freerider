@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.springframework.boot.test.context.SpringBootTest; // TODO 1
+import org.springframework.boot.test.context.SpringBootTest;
 
-// @SpringBootTest TODO 2
+@SpringBootTest
 public class SampleTests {
 
 	//

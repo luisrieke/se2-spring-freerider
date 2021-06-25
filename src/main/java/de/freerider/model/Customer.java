@@ -12,6 +12,14 @@ public class Customer {
 
     // --- Konstruktor ---
 
+    public Customer() {
+        this.lastName = "";
+        this.firstName = "";
+        this.contact = "";
+        this.id = null;
+        this.status = Status.New;
+    }
+
     public Customer(String lastName, String firstName, String contact) {
         this.lastName = lastName;
         this.firstName = firstName;

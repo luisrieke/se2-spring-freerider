@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
 public class CustomerTest {
 
     // --- Attribute ---
@@ -16,8 +19,8 @@ public class CustomerTest {
     @BeforeEach
     public void setUpEach() {
         // neue Customer anlegen:
-        mats = new Customer("Schwarz", "Mats", "Michael");
-        thomas = new Customer("Weiss", "Thomas", "Frederike");
+        mats = new Customer("Schwarz", "Mats", "mats.schwarz@email.de");
+        thomas = new Customer("Weiss", "Thomas", "thomas.weiss@email.de");
     }
 
     @Test
@@ -134,10 +137,10 @@ public class CustomerTest {
     }
 
     void testSetContact() {
-        mats.setContact("Fabian");
-        thomas.setContact("Brigitte");
-        assertEquals("Fabian", mats.getContact());
-        assertEquals("Brigitte", thomas.getContact());
+        mats.setContact("hallo.welt@email.de");
+        thomas.setContact("wer.da@email.de");
+        assertEquals("hallo.welt@email.de", mats.getContact());
+        assertEquals("wer.da@email.de", thomas.getContact());
     }
 
     // i. testStatusInitial() – prüft, dass der initiale Status eines Kunden New ist.
