@@ -5,13 +5,13 @@ import java.util.Optional;
 
 /**
  * Generic interface for CRUD operations on a repository for a specific type.
- * 
+ *
  * Source:
  *   https://github.com/spring-projects/spring-data-commons/blob/main/src/main/java/org/springframework/data/repository/CrudRepository.java
- * 
+ *
  * @param <T> type/class of objects stored in repository
  * @param <ID> ID type, e.g. String
- * 
+ *
  * @author Oliver Gierke
  * @author Eberhard Wolff
  * @author Jens Schauder

@@ -1,177 +1,120 @@
 package de.freerider.model;
 
+import de.freerider.model.Customer;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
+//@SpringBootTest
 public class CustomerTest {
+	private Customer mats;
+	private Customer thomas;
 
-    // --- Attribute ---
+	@BeforeEach
+	public void createCustomers() {
+		mats = new Customer();
+		thomas = new Customer();
+	}
 
-    private Customer mats;
-    private Customer thomas;
+	@Test
+	public void testIdNull() {
+		assertNull(mats.getId());
+	}
 
-    @BeforeEach
-    public void setUpEach() {
-        // neue Customer anlegen:
-        mats = new Customer("Schwarz", "Mats", "mats.schwarz@email.de");
-        thomas = new Customer("Weiss", "Thomas", "thomas.weiss@email.de");
-    }
+	@Test
+	public void testSetId() {
+		mats.setId("ExampleId123");
+		assertEquals("ExampleId123", mats.getId());
+	}
 
-    @Test
-    void IdTests() {
-        testIdNull();
-        testSetId();
-        testSetIdOnlyOnce();
-        testResetId();
-    }
+	@Test
+	public void testSetIdOnlyOnce() {
+		mats.setId("ExampleId123");
+		mats.setId("NotTheNewId");
+		assertEquals("ExampleId123", mats.getId());
+	}
 
-    @Test
-    void NameTests() {
-        testNamesInitial();
-        testNamesSetNull();
-        testSetNames();
-    }
+	@Test
+	public void testResetId() {
+		mats.setId("ExampleId123");
+		mats.setId(null);
+		assertNull(mats.getId());
+	}
 
-    @Test
-    void ContactTest() {
-        testContactsInitial();
-        testContactsSetNull();
-        testSetContact();
-    }
 
-    @Test
-    void StatusTest() {
-        testStatusInitial();
-        testSetStatus();
-    }
+	// Name Tests
 
-    // --- Methoden ---
+	@Test
+	public void testNamesInitial() {
+		assertEquals("", mats.getFirstName());
+		assertEquals("", mats.getLastName());
+	}
 
-    // a. testIdNull() – prüft, dass das Id‐Attribut eines neu erzeugten Customer‐Objekts null ist.
-    void testIdNull() {
-        assertEquals(null, mats.getId());
-        assertEquals(null, thomas.getId());
-    }
 
-    // b. testSetId() – prüft, dass Id mit einem nicht‐Null Wert gesetzt werden kann.
-    void testSetId() {
-        mats.setId("123");
-        thomas.setId("456");
-        assertEquals("123", mats.getId());
-        assertEquals("456", thomas.getId());
-    }
+	@Test
+	public void testNamesSetNull() {
+		mats.setLastName(null);
+		mats.setFirstName(null);
+		assertEquals("", mats.getLastName());
+		assertEquals("", mats.getFirstName());
+	}
 
-    // c. testSetIdOnlyOnce() – prüft, dass nach dem Setzen eines (nicht‐Null) Id, der Id nicht erneut mit einem neuen (nicht‐Null) Wert gesetzt werden kann.
-    void testSetIdOnlyOnce() {
-        mats.setId("123");
-        thomas.setId("456");
-        mats.setId("888");
-        thomas.setId("888");
-        assertEquals("123", mats.getId());
-        assertEquals("456", thomas.getId());
-    }
 
-    // d. testResetId() – prüft, dass der Id mit setId(null); zurückgesetzt werden kann.
-    void testResetId() {
-        mats.setId("123");
-        thomas.setId("456");
-        mats.setId(null);
-        thomas.setId(null);
-        assertEquals(null, mats.getId());
-        assertEquals(null, thomas.getId());
-    }
+	@Test
+	public void testSetNames() {
+		mats.setLastName("NichtMatsNachname");
+		mats.setFirstName("NichtMats");
+		assertEquals("NichtMatsNachname", mats.getLastName());
+		assertEquals("NichtMats", mats.getFirstName());
+	}
 
-    // e. testNamesInitial() – prüft, dass Vor‐ und Nachname initial mit ““ (nicht null) initialisiert sind.
+	// Contact Tests
 
-    void testNamesInitial() {
-        assertNotNull(mats.getFirstName());
-        assertNotNull(mats.getFirstName());
-        assertNotNull(thomas.getLastName());
-        assertNotNull(thomas.getLastName());
-    }
+	@Test
+	public void testContactsInitial() {
+		assertNotNull(mats.getContact());
+	}
 
-    // f. testNamesSetNull() – prüft, dass Vor‐ oder Nachnamen bei dem Versuch, diese auf Null zu setzen, die getter‐Methoden ““ (leerer String) zurückgeben.
+	@Test
+	public void testContactsSetNull() {
+		mats.setContact(null);
+		assertNotNull(mats.getContact());
+	}
 
-    void testNamesSetNull() {
-        mats.setFirstName(null);
-        mats.setLastName(null);
-        thomas.setFirstName(null);
-        thomas.setLastName(null);
-        assertEquals("", mats.getFirstName());
-        assertEquals("", mats.getLastName());
-        assertEquals("", thomas.getFirstName());
-        assertEquals("", thomas.getLastName());
-    }
+	@Test
+	public void testSetContact() {
+		mats.setContact("example@example.com");
+		assertEquals("example@example.com", mats.getContact());
+	}
 
-    // g. testSetNames() – prüft das Setzen von Vor‐ und Nachnamen auf reguläre Werte (nicht null und nicht ““ ) anhand von Beispielnamen. Die getter‐Methoden geben diese Werte entspr. zurück.
 
-    void testSetNames() {
-        mats.setFirstName("Fabian");
-        mats.setLastName("Hannes");
-        thomas.setFirstName("Brigitte");
-        thomas.setLastName("Becker");
-        assertEquals("Fabian", mats.getFirstName());
-        assertEquals("Hannes", mats.getLastName());
-        assertEquals("Brigitte", thomas.getFirstName());
-        assertEquals("Becker", thomas.getLastName());
-    }
+	// status test
 
-    // h. testContactsInitial(), testContactsSetNull(), testSetContact() mit denselben Annahmen wie für Namen.
+	@Test
+	public void testStatusInitial() {
+		assertEquals(Customer.Status.New, mats.getStatus());
+	}
 
-    void testContactsInitial() {
-        assertNotNull(mats.getContact());
-        assertNotNull(thomas.getContact());
-    }
+	@Test
+	public void testSetStatus() {
+		mats.setStatus(Customer.Status.Active);
+		assertEquals(Customer.Status.Active, mats.getStatus());
 
-    void testContactsSetNull() {
-        mats.setContact(null);
-        thomas.setContact(null);
-        assertEquals("", mats.getContact());
-        assertEquals("", thomas.getContact());
-    }
+		mats.setStatus(Customer.Status.Deleted);
+		assertEquals(Customer.Status.Deleted, mats.getStatus());
 
-    void testSetContact() {
-        mats.setContact("hallo.welt@email.de");
-        thomas.setContact("wer.da@email.de");
-        assertEquals("hallo.welt@email.de", mats.getContact());
-        assertEquals("wer.da@email.de", thomas.getContact());
-    }
+		mats.setStatus(Customer.Status.InRegistration);
+		assertEquals(Customer.Status.InRegistration, mats.getStatus());
 
-    // i. testStatusInitial() – prüft, dass der initiale Status eines Kunden New ist.
+		mats.setStatus(Customer.Status.Suspended);
+		assertEquals(Customer.Status.Suspended, mats.getStatus());
 
-    void testStatusInitial() {
-        assertEquals(Customer.Status.New, mats.getStatus());
-        assertEquals(Customer.Status.New, thomas.getStatus());
-    }
-
-    // j. testSetStatus() – prüft, dass nach dem Setzen eines neuen Status, dieser mit der getter‐Methode zurückgegeben wird (für alle Werte in enum Status prüfen).
-
-    void testSetStatus() {
-        mats.setStatus(Customer.Status.InRegistration);
-        thomas.setStatus(Customer.Status.InRegistration);
-        assertEquals(Customer.Status.InRegistration, mats.getStatus());
-        assertEquals(Customer.Status.InRegistration, thomas.getStatus());
-
-        mats.setStatus(Customer.Status.Active);
-        thomas.setStatus(Customer.Status.Active);
-        assertEquals(Customer.Status.Active, mats.getStatus());
-        assertEquals(Customer.Status.Active, thomas.getStatus());
-
-        mats.setStatus(Customer.Status.Suspended);
-        thomas.setStatus(Customer.Status.Suspended);
-        assertEquals(Customer.Status.Suspended, mats.getStatus());
-        assertEquals(Customer.Status.Suspended, thomas.getStatus());
-
-        mats.setStatus(Customer.Status.Deleted);
-        thomas.setStatus(Customer.Status.Deleted);
-        assertEquals(Customer.Status.Deleted, mats.getStatus());
-        assertEquals(Customer.Status.Deleted, thomas.getStatus());
-    }
-
+		mats.setStatus(Customer.Status.New);
+		assertEquals(Customer.Status.New, mats.getStatus());
+	}
 }

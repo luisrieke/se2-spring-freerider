@@ -1,97 +1,87 @@
 package de.freerider.model;
 
 public class Customer {
+	String id;
+	String lastName;
+	String firstName;
+	String contact;
+	Status status;
 
-    // --- Attribute ---
+	public Customer() {
+		this.lastName = "";
+		this.firstName = "";
+		this.contact = "";
+		this.id = null;
+		this.status = Status.New;
+	}
 
-    private String id;
-    private String lastName;
-    private String firstName;
-    private String contact;
-    private Status status;
+	public Customer(String lastName, String firstName, String contact) {
+		this.lastName = lastName;
+		this.firstName = firstName;
+		this.contact = contact;
+		this.id = null;
+		this.status = Status.New;
+	}
 
-    // --- Konstruktor ---
+	public String getId() {
+		return id;
+	}
 
-    public Customer() {
-        this.lastName = "";
-        this.firstName = "";
-        this.contact = "";
-        this.id = null;
-        this.status = Status.New;
-    }
+	public void setId(String id) {
+		if(this.id == null || id == null) {
+			this.id = id;
+		}
+	}
 
-    public Customer(String lastName, String firstName, String contact) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.contact = contact;
-        this.id = null;
-        this.status = Status.New;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    // --- getter und setter ---
+	public void setLastName(String lastName) {
+		if(lastName == null) {
+			this.lastName = "";
+		} else {
+			this.lastName = lastName;
+		}
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setId(String id) {
-        if (this.id == null) {
-            this.id = id;
-        }
-        if (id == null) {
-            this.id = null;
-        }
-    }
+	public void setFirstName(String firstName) {
+		if(firstName == null) {
+			this.firstName = "";
+		} else {
+			this.firstName = firstName;
+		}
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getContact() {
+		return contact;
+	}
 
-    public void setLastName(String lastName) {
-        if (lastName == null) {
-            this.lastName = "";
-        } else {
-            this.lastName = lastName;
-        }
-    }
+	public void setContact(String contact) {
+		if(contact == null) {
+			this.contact = "";
+		} else {
+			this.contact = contact;
+		}
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public Status getStatus() {
+		return status;
+	}
 
-    public void setFirstName(String firstName) {
-        if (firstName == null) {
-            this.firstName = "";
-        } else {
-            this.firstName = firstName;
-        }
-    }
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 
-    public String getContact() {
-        return contact;
-    }
-
-    public void setContact(String contact) {
-        if (contact == null) {
-            this.contact = "";
-        } else {
-            this.contact = contact;
-        }
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    enum Status {
-        New,
-        InRegistration,
-        Active,
-        Suspended,
-        Deleted
-    }
+	enum Status {
+		New,
+		InRegistration,
+		Active,
+		Suspended,
+		Deleted
+	}
 }

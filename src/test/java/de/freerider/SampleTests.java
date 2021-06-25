@@ -15,16 +15,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-public class SampleTests {
 
+//@SpringBootTest
+public class SampleTests {
 	//
-	private static int loglevel = 2;		// 0: silent; 1: @Test methods; 2: all methods
+	private static int loglevel = 1;		// 0: silent; 1: @Test methods; 2: all methods
 
 	// Constructor
 	public SampleTests() {
 		log( "Constructor()", "ABCTest() called" );
 	}
+
 
 	/**
 	 * Set up test, runs ONCE before every test execution
@@ -45,7 +46,7 @@ public class SampleTests {
 
 	/**
 	 * -------------------------------
-	 * @Test functions: abcFirstTest(), abcSecondTest(), abcThirdTest(), ...
+	 * Test functions: abcFirstTest(), abcSecondTest(), abcThirdTest(), ...
 	 */
 	@Test
 	void abcFirstTest() {
@@ -66,13 +67,13 @@ public class SampleTests {
 		assertTrue( s1 == s2 );
 		assertFalse( s1 == s3 );
 		assertNull( s4 );
-		assertNotNull( s1 );	
+		assertNotNull( s1 );
 	}
 
 	@Test
 	void abcSecondTest() {
 		log( "abcSecondTest()" );
-		
+
 	}
 
 	@Test
